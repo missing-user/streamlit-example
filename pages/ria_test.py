@@ -8,28 +8,42 @@ if 'user_has_added_entry' not in st.session_state:
 
 # If the user hasn't added any entries, display a greyed-out example entry
 if not st.session_state.user_has_added_entry:
-    df = pd.DataFrame([{"Date": "Example Date", "Your Comment": "Lorem ipsum dolor sit amet..."}])
+    example_text = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum. "
+                    "Donec in efficitur leo. Sed nec tempor nunc. Nulla facilisi. Suspendisse potenti. Aliquam erat volutpat. "
+                    "Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus. Vivamus lacinia odio vitae vestibulum. "
+                    "Donec in efficitur leo. Sed nec tempor nunc. Nulla facilisi. Suspendisse potenti. Aliquam erat volutpat.")
+    df = pd.DataFrame([{"Date": datetime.date.today().strftime('%d.%m.%Y'), "Journal Entry": example_text}])
 else:
-    df = pd.DataFrame(columns=["Date", "Your Comment"])
+    df = pd.DataFrame(columns=["Date", "Journal Entry"])
+
+# Use CSS to style the table and make it span the whole width
+st.markdown("""
+<style>
+    table {
+        width: 100%;
+    }
+    th:nth-child(1) {
+        width: 15%;
+    }
+    th:nth-child(2) {
+        width: 85%;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # Create a placeholder for the dataframe at the top
 table_placeholder = st.empty()
 
-# Display the initial dataframe without the index and make it span the whole display size
-table_placeholder.write(df, index=False, width=100%)
+# Display the initial dataframe
+table_placeholder.write(df, index=False)
 
-# Get the current date
-current_date = datetime.date.today()
-
-# Display the current date without allowing user input (making it a static display)
-st.write(f"Date: {current_date.strftime('%d.%m.%Y')}")
-
-# Input fields for comments
-your_comment = st.text_area("Your Comment", max_chars=1000, height=150)
+# Input fields for comments at the bottom
+st.write("## Add a Journal Entry")
+your_comment = st.text_area("", max_chars=2000, height=200)
 
 # Button to add the entry to the dataframe
 if st.button("Add Entry"):
-    new_entry = {"Date": current_date.strftime("%d.%m.%Y"), "Your Comment": your_comment}
+    new_entry = {"Date": datetime.date.today().strftime('%d.%m.%Y'), "Journal Entry": your_comment}
     df.loc[len(df)] = new_entry  # Add the new entry to the DataFrame
     st.session_state.user_has_added_entry = True
-    table_placeholder.write(df, index=False, width=100%)  # Update the displayed table in the placeholder
+    table_placeholder.write(df, index=False)  # Update the displayed table with the new entry
