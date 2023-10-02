@@ -1,7 +1,12 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
-df = pd.DataFrame(np.random.randn(50, 20), columns=("col %d" % i for i in range(20)))
+df = pd.DataFrame(
+    [
+       {"Date": "10.02.2001", "Your Comment": "test", "Comment Friend 1": "test 2"},
+   ]
+)
+edited_df = st.data_editor(df)
 
-st.dataframe(df)  # Same as st.write(df)  
+favorite_command = edited_df.loc[edited_df["rating"].idxmax()]["command"]
+st.markdown(f"Your favorite command is **{favorite_command}** 🎈")
