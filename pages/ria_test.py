@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 
 # Sample data
-df = pd.DataFrame()
+df = pd.DataFrame(columns=["Date", "Your Comment"])
 
 # Display the dataframe at the top
 st.table(df)
