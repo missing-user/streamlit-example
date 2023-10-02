@@ -12,8 +12,11 @@ if not st.session_state.user_has_added_entry:
 else:
     df = pd.DataFrame(columns=["Date", "Your Comment"])
 
-# Display the dataframe at the top
-st.table(df)
+# Create a placeholder for the dataframe at the top
+table_placeholder = st.empty()
+
+# Display the initial dataframe
+table_placeholder.write(df.style.set_properties(**{'background-color': 'grey' if not st.session_state.user_has_added_entry else 'white'}))
 
 # Get the current date
 current_date = datetime.date.today()
@@ -29,4 +32,4 @@ if st.button("Add Entry"):
     new_entry = {"Date": current_date.strftime("%d.%m.%Y"), "Your Comment": your_comment}
     df.loc[len(df)] = new_entry  # Add the new entry to the DataFrame
     st.session_state.user_has_added_entry = True
-    st.write(df)  # Update the displayed table with the new entry
+    table_placeholder.write(df)  # Update the displayed table in the placeholder
