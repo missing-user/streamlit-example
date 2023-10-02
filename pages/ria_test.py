@@ -34,8 +34,8 @@ st.markdown("""
 # Create a placeholder for the dataframe at the top
 table_placeholder = st.empty()
 
-# Display the initial dataframe
-table_placeholder.write(df, index=False)
+# Display the initial dataframe using the specified method
+table_placeholder.markdown(df.to_html(escape=False, index=False), unsafe_allow_html=True)
 
 # Input fields for comments at the bottom
 st.write("## Add a Journal Entry")
@@ -46,4 +46,4 @@ if st.button("Add Entry"):
     new_entry = {"Date": datetime.date.today().strftime('%d.%m.%Y'), "Journal Entry": your_comment}
     df.loc[len(df)] = new_entry  # Add the new entry to the DataFrame
     st.session_state.user_has_added_entry = True
-    table_placeholder.write(df, index=False)  # Update the displayed table with the new entry
+    table_placeholder.markdown(df.to_html(escape=False, index=False), unsafe_allow_html=True)  # Update the displayed table with the new entry
