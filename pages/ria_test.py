@@ -16,7 +16,7 @@ else:
 table_placeholder = st.empty()
 
 # Display the initial dataframe without the index and make it span the whole display size
-table_placeholder.write(df.style.set_properties(**{'background-color': 'grey' if not st.session_state.user_has_added_entry else 'white', 'width': '100%'}).hide_index())
+table_placeholder.write(df, index=False, width=100%)
 
 # Get the current date
 current_date = datetime.date.today()
@@ -32,4 +32,4 @@ if st.button("Add Entry"):
     new_entry = {"Date": current_date.strftime("%d.%m.%Y"), "Your Comment": your_comment}
     df.loc[len(df)] = new_entry  # Add the new entry to the DataFrame
     st.session_state.user_has_added_entry = True
-    table_placeholder.write(df.style.set_properties(**{'width': '100%'}).hide_index())  # Update the displayed table in the placeholder
+    table_placeholder.write(df, index=False, width=100%)  # Update the displayed table in the placeholder
