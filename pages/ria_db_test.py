@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
 import psycopg2
-from sqlalchemy import create_engine
-from streamlit.report_thread import get_report_ctx
+from streamlit.scriptrunner import get_script_run_ctx as get_report_ctx
 
 
 #https://towardsdatascience.com/implementing-a-stateful-architecture-with-streamlit-58e52448efa1
