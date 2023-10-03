@@ -4,6 +4,9 @@ import psycopg2
 from sqlalchemy import create_engine
 from streamlit.report_thread import get_report_ctx
 
+
+#https://towardsdatascience.com/implementing-a-stateful-architecture-with-streamlit-58e52448efa1
+
 def get_session_id():
     session_id = get_report_ctx().session_id
     session_id = session_id.replace('-','_')
@@ -33,18 +36,17 @@ def read_state_df(engine,session_id):
 if __name__ == '__main__':
     
     #Creating PostgreSQL client
-    engine = create_engine('postgresql://<username>:<password>@localhost:5432/<database name>')
-
+    conn = st.experimental_connection("postgresql", type="sql")
     #Getting session ID
     session_id = get_session_id()
 
     #Creating session state tables
-    engine.execute("CREATE TABLE IF NOT EXISTS %s (size text)" % (session_id))
-    len_table =  engine.execute("SELECT COUNT(*) FROM %s" % (session_id));
+    conn.query("CREATE TABLE IF NOT EXISTS %s (size text)" % (session_id))
+    len_table =  conn.query("SELECT COUNT(*) FROM %s" % (session_id));
     len_table = len_table.first()[0]
 
     if len_table == 0:
-        engine.execute("INSERT INTO %s (size) VALUES ('1')" % (session_id));
+        conn.query("INSERT INTO %s (size) VALUES ('1')" % (session_id));
     
     #Creating pages
     page = st.sidebar.selectbox('Select page:',('Page One','Page Two'))
@@ -53,15 +55,15 @@ if __name__ == '__main__':
         st.write('Hello world')
         
     elif page == 'Page Two':
-        size = st.text_input('Matrix size',read_state('size',engine,session_id))
-        write_state('size',size,engine,session_id)
-        size = int(read_state('size',engine,session_id))
+        size = st.text_input('Matrix size',read_state('size',conn,session_id))
+        write_state('size',size,conn,session_id)
+        size = int(read_state('size',conn,session_id))
 
         if st.button('Click'):
             data = [[0 for (size) in range((size))] for y in range((size))]
             df = pd.DataFrame(data)
-            write_state_df(df,engine,session_id + '_df')
+            write_state_df(df,conn,session_id + '_df')
 
-        if read_state_df(engine,session_id + '_df').empty is False:
-            df = read_state_df(engine,session_id + '_df')
+        if read_state_df(conn,session_id + '_df').empty is False:
+            df = read_state_df(conn,session_id + '_df')
             st.write(df)
